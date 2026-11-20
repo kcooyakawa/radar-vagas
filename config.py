@@ -30,6 +30,10 @@ EXCLUDE = [
     "data scientist", "data analyst", "data engineer", "machine learning engineer", "sre",
     "software", "qa ", "tester", "scraping", "api ", "blockchain", "solidity", "sales",
     "account executive", "intern", "estágio", "recruiter", "accountant",
+    "ios", "android", "mobile app", "iphone app", "app development", "pcb", "hvac", "electrical",
+    "mechanical", "cad ", "interior", "architect", "bathtub", "furniture", "sculpture", "mold",
+    "nail", "kurti", "jewelry", "automation", "consultant", "course", "mentorship", "tutor",
+    "level artist", "game-ready", "unity", "unreal", "pcb design", "circuit",
 ]
 
 # Termos que tornam a vaga "TOP" (borda neon)

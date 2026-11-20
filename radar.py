@@ -105,7 +105,7 @@ def freelancer():
         for p in json.loads(get(u)).get("result", {}).get("projects", []):
             b, cur = p.get("budget") or {}, (p.get("currency") or {}).get("code", "")
             rate = (p.get("currency") or {}).get("exchange_rate") or 1
-            sal = f"{cur} {b.get('minimum', 0):g}–{b.get('maximum', 0):g}" if b else ""
+            sal = f"{cur} {(b.get('minimum') or 0):g}–{(b.get('maximum') or 0):g}" if b else ""
             yield job("Freelancer", "Freela", p["title"], "Cliente Freelancer",
                       f"https://www.freelancer.com/projects/{p['seo_url']}", p.get("time_submitted"),
                       p.get("description") or p.get("preview_description"),
@@ -154,8 +154,8 @@ def score(j):
     if has(title, config.STRONG): s += 3
     if re.search(r"senior|sênior|sr\.?|lead|head|principal", title): s += 1
     if j["salary"]: s += 1
-    if j["budget"] >= 500: s += 2
-    elif j["budget"] >= 200: s += 1
+    if j["budget"] >= 1000: s += 2
+    elif j["budget"] >= 500: s += 1
     loc = j["location"].lower()
     if any(w in loc for w in ("brazil", "brasil", "latam", "latin", "anywhere", "worldwide", "mundo", "americas")): s += 1
     if datetime.fromisoformat(j["date"]) > NOW - timedelta(hours=24): s += 1
@@ -192,7 +192,7 @@ def main():
             merged[jid] = j
     jobs = sorted(merged.values(), key=lambda j: j["date"], reverse=True)
     ranked = sorted(j["score"] for j in jobs)
-    cut = max(4, ranked[int(len(ranked) * 0.85)] if ranked else 4)
+    cut = max(5, ranked[int(len(ranked) * 0.9)] if ranked else 4)
     for j in jobs:
         j["top"] = j["score"] >= cut
 
