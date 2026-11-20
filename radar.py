@@ -133,7 +133,23 @@ def linkedin():
             time.sleep(2)
 
 
-FETCHERS = dict(remoteok=remoteok, remotive=remotive, weworkremotely=weworkremotely,
+def gupy():
+    """Brasil: portal público da Gupy (vagas publicadas por empresas reais)."""
+    for term in config.SEARCH_TERMS_BR:
+        u = ("https://portal.api.gupy.io/api/v1/jobs?limit=100&jobName=" + urllib.parse.quote(term))
+        for j in json.loads(get(u)).get("data", []):
+            wp = (j.get("workplaceType") or "").lower()
+            if wp not in ("remote", "hybrid") and not j.get("isRemoteWork"):
+                continue
+            loc = "Remoto (Brasil)" if wp == "remote" or j.get("isRemoteWork") else \
+                f"Híbrido — {j.get('city') or ''}/{j.get('state') or ''}"
+            yield job("Gupy", "Emprego BR", j.get("name"), j.get("careerPageName"), j.get("jobUrl"),
+                      j.get("publishedDate"), j.get("description") or "", [term, j.get("type") or ""],
+                      location=loc, logo=j.get("careerPageLogo") or "")
+        time.sleep(1)
+
+
+FETCHERS = dict(gupy=gupy, remoteok=remoteok, remotive=remotive, weworkremotely=weworkremotely,
                 himalayas=himalayas, freelancer=freelancer, linkedin=linkedin)
 
 
@@ -145,7 +161,19 @@ def has(text, words):
 def matches(j):
     title = j["title"].lower()
     text = title + " " + " ".join(j["tags"]).lower()
-    return has(text, config.KEYWORDS) and not has(title, config.EXCLUDE)
+    if not has(text, config.KEYWORDS) or has(title, config.EXCLUDE):
+        return False
+    return not is_scam(j)
+
+
+def is_scam(j):
+    """Minimiza golpes: termos suspeitos, freela com orçamento irrisório, sem link/empresa."""
+    body = (j["title"] + " " + j.get("full", "") + " " + j.get("desc", "")).lower()
+    if has(body, config.SCAM):
+        return True
+    if j["kind"] == "Freela" and 0 < j.get("budget", 0) < config.MIN_FREELA_BUDGET:
+        return True
+    return not j["url"].startswith("https://")
 
 
 def score(j):
@@ -160,6 +188,7 @@ def score(j):
     if any(w in loc for w in ("brazil", "brasil", "latam", "latin", "anywhere", "worldwide", "mundo", "americas")): s += 1
     if datetime.fromisoformat(j["date"]) > NOW - timedelta(hours=24): s += 1
     if j["logo"]: s += 0.5
+    if j["source"] == "Gupy": s += 1  # empresa verificada no Brasil
     return s
 
 

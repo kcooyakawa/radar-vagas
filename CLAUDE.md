@@ -9,8 +9,8 @@ Monitor de vagas remotas e freelas **criativos** (direção de arte, design, soc
 - Automação: GitHub Actions (`.github/workflows/radar.yml`), roda a cada 3h (`17 */3 * * *`) + botão manual.
 
 ## Estrutura
-- `config.py` — **o arquivo que mais se edita**: `KEYWORDS` (inclusão por título/tags), `EXCLUDE` (descarta por título), `STRONG` (vaga "TOP"), `SEARCH_TERMS` (buscas por termo), `KEEP_DAYS`, `SOURCES` (liga/desliga fontes).
-- `radar.py` — fetchers por fonte (`remoteok`, `remotive`, `weworkremotely`, `himalayas`, `freelancer`, `linkedin`), `matches()`, `score()`, `main()`.
+- `config.py` — **o arquivo que mais se edita**: `KEYWORDS` (inclusão por título/tags), `EXCLUDE` (descarta por título), `STRONG` (vaga "TOP"), `SEARCH_TERMS` (buscas por termo), `SEARCH_TERMS_BR`, `SCAM` (anti-golpe), `MIN_FREELA_BUDGET`, `KEEP_DAYS`, `SOURCES` (liga/desliga fontes).
+- `radar.py` — fetchers por fonte (`gupy` (BR), `remoteok`, `remotive`, `weworkremotely`, `himalayas`, `freelancer`, `linkedin`), `matches()`, `score()`, `main()`.
 - `template.html` — layout da página; os dados entram substituindo o placeholder `/*__DATA__*/null`.
 - `data/jobs.json` — histórico de vagas (gerado; mantém `first_seen` para marcar novidades).
 - `docs/index.html` — página final (gerada; servida pelo GitHub Pages).
