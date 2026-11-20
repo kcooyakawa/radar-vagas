@@ -25,6 +25,16 @@ def clean(t, n=280):
     return t[:n] + ("…" if len(t) > n else "")
 
 
+def full_text(t, n=6000):
+    t = html.unescape(t or "")
+    t = re.sub(r"(?i)<br\s*/?>|</p>|</li>|</h\d>|</div>", "\n", t)
+    t = re.sub(r"(?i)<li[^>]*>", "• ", t)
+    t = re.sub(r"<[^>]+>", "", t)
+    t = re.sub(r"[ \t]+", " ", t)
+    t = re.sub(r"\n\s*\n+", "\n\n", t).strip()
+    return t[:n] + ("…" if len(t) > n else "")
+
+
 def iso(v):
     try:
         if isinstance(v, (int, float)):
@@ -41,7 +51,7 @@ def iso(v):
 
 def job(src, kind, title, company, url, date, desc="", tags=None, salary="", location=""):
     return dict(id=f"{src}:{url}", source=src, kind=kind, title=clean(title, 140),
-                company=clean(company, 80), url=url, date=iso(date), desc=clean(desc),
+                company=clean(company, 80), url=url, date=iso(date), desc=clean(desc), full=full_text(desc),
                 tags=[str(t) for t in (tags or [])][:6], salary=salary, location=location)
 
 
