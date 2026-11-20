@@ -1,26 +1,53 @@
 # ===== EDITE AQUI =====
-# Palavras-chave: a vaga entra se o título/tags/descrição contiver QUALQUER uma.
-KEYWORDS = ["python", "django", "fastapi", "data", "automação", "automation", "scraping"]
+# A vaga entra se o TÍTULO ou as TAGS tiverem pelo menos um destes termos.
+KEYWORDS = [
+    # direção de arte / criação
+    "art director", "art direction", "creative director", "diretor de arte", "direção de arte",
+    "diretora de arte", "creative lead", "criação", "criativo", "creative",
+    # design
+    "designer", "design", "graphic", "gráfico", "brand", "branding", "identidade visual",
+    "visual identity", "logo", "illustrat", "ilustra", "figma", "ui/ux", "ux/ui", "ui designer",
+    "product designer", "web designer", "packaging", "key visual", "banner", "flyer", "poster",
+    "presentation", "apresentação", "canva", "photoshop",
+    # sites / landing pages
+    "landing page", "landing", "website", "web design", "site", "webflow", "framer", "wix",
+    # social media
+    "social media", "mídias sociais", "redes sociais", "instagram", "content creator",
+    "criador de conteúdo", "carrossel", "carousel", "thumbnail",
+    # vídeo / motion
+    "video", "vídeo", "motion", "animator", "animação", "animation", "after effects", "premiere",
+    "editor de vídeo", "video editor", "reels", "tiktok", "youtube", "3d",
+    # IA criativa
+    "ai art", "ai image", "ai video", "midjourney", "generative", "stable diffusion",
+    "runway", "ai content", "prompt",
+]
 
-# Palavras que excluem a vaga (ex.: senioridade que você não quer)
-EXCLUDE = ["intern", "estágio"]
+# Se o título tiver qualquer destes, a vaga é descartada (nada de código/engenharia)
+EXCLUDE = [
+    "developer", "desenvolvedor", "engineer", "engenheiro", "programador", "programmer",
+    "backend", "back-end", "frontend", "front-end", "full stack", "fullstack", "devops",
+    "python", "java", "php", "node", "react", "angular", ".net", "golang", "ruby",
+    "data scientist", "data analyst", "data engineer", "machine learning engineer", "sre",
+    "software", "qa ", "tester", "scraping", "api ", "blockchain", "solidity", "sales",
+    "account executive", "intern", "estágio", "recruiter", "accountant",
+]
 
-# Busca usada nas fontes que aceitam termo (LinkedIn, Remotive, Freelancer)
-SEARCH_TERMS = ["python"]
+# Termos que tornam a vaga "TOP" (borda neon)
+STRONG = ["art director", "creative director", "diretor de arte", "direção de arte",
+          "senior designer", "lead designer", "brand designer", "motion designer",
+          "landing page", "web designer", "social media designer", "ai video", "ai art"]
 
-# Quantos dias manter vagas antigas no painel
+# Buscas nas fontes que aceitam termo (LinkedIn, Remotive, Freelancer)
+SEARCH_TERMS = ["art director", "graphic designer", "social media designer",
+                "video editor", "landing page design"]
+
 KEEP_DAYS = 21
 
-# Liga/desliga fontes
 SOURCES = {
     "remoteok": True,
     "remotive": True,
     "weworkremotely": True,
     "himalayas": True,
-    "arbeitnow": True,
     "freelancer": True,
-    "linkedin": True,        # página pública, sem login; pode falhar às vezes
-    "github_br": True,       # vagas BR: backend-br, frontendbr, react-brasil
+    "linkedin": True,
 }
-
-GITHUB_BR_REPOS = ["backend-br/vagas", "frontendbr/vagas", "react-brasil/vagas"]
