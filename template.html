@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radar de Vagas</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1d1d1b;--mute:#6b6a66;--line:#e4e2dc;--acc:#2f5bea;--new:#e8562a;--free:#0f8a5f}
+@media(prefers-color-scheme:dark){:root{--bg:#141414;--card:#1e1e1e;--ink:#eee;--mute:#9a9a9a;--line:#2e2e2e}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 -apple-system,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;background:var(--bg);padding:16px 20px;border-bottom:1px solid var(--line);z-index:2}
+h1{margin:0 0 4px;font-size:22px}small{color:var(--mute)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+input,select,button{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+input{flex:1;min-width:180px}button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.card.seen{opacity:.55}.top{display:flex;gap:6px;flex-wrap:wrap;font-size:12px}
+.pill{padding:2px 8px;border-radius:99px;background:var(--line)}.pill.new{background:var(--new);color:#fff}.pill.freela{background:var(--free);color:#fff}
+.card h3{margin:0;font-size:16px}.co{color:var(--mute);font-size:13px}.desc{font-size:13px;color:var(--mute);flex:1}
+.tags span{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin:0 4px 4px 0;display:inline-block}
+.act{display:flex;gap:8px}.act a{flex:1;text-align:center;background:var(--acc);color:#fff;text-decoration:none;padding:8px;border-radius:8px}
+.empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:40px}
+</style></head><body>
+<header><h1>Radar de Vagas</h1><small id="meta"></small>
+<div class="bar">
+ <input id="q" placeholder="Filtrar por palavra, empresa, tecnologia…">
+ <select id="kind"><option value="">Todos os tipos</option></select>
+ <select id="src"><option value="">Todas as fontes</option></select>
+ <button id="onlyNew">Só novas</button><button id="hideSeen">Ocultar vistas</button>
+</div></header>
+<main id="grid"></main>
+<script>
+const D=/*__DATA__*/null;
+const $=s=>document.querySelector(s),seen=new Set(JSON.parse(localStorage.seen||"[]"));
+const st={onlyNew:false,hideSeen:false};
+const ago=d=>{const h=(Date.now()-new Date(d))/36e5;return h<1?"agora":h<24?`há ${h|0}h`:`há ${h/24|0}d`};
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+for(const [id,key] of [["kind","kind"],["src","source"]])[...new Set(D.jobs.map(j=>j[key]))].sort().forEach(v=>$("#"+id).add(new Option(v,v)));
+$("#meta").textContent=`${D.jobs.length} vagas · atualizado ${new Date(D.updated).toLocaleString("pt-BR")} · fontes: `+Object.entries(D.status).map(([k,v])=>`${k} ${v}`).join(", ");
+function render(){
+ const q=$("#q").value.toLowerCase(),k=$("#kind").value,s=$("#src").value;
+ const list=D.jobs.filter(j=>(!k||j.kind==k)&&(!s||j.source==s)&&(!st.onlyNew||j.is_new)&&(!st.hideSeen||!seen.has(j.id))
+  &&(!q||[j.title,j.company,j.desc,j.tags.join(" "),j.location].join(" ").toLowerCase().includes(q)));
+ $("#grid").innerHTML=list.length?list.map(j=>`<div class="card ${seen.has(j.id)?"seen":""}">
+  <div class="top">${j.is_new?'<span class="pill new">NOVA</span>':""}<span class="pill ${j.kind=="Freela"?"freela":""}">${esc(j.kind)}</span><span class="pill">${esc(j.source)}</span><span class="pill">${ago(j.date)}</span></div>
+  <h3>${esc(j.title)}</h3><div class="co">${esc(j.company)}${j.location?" · "+esc(j.location):""}${j.salary?" · 💰 "+esc(j.salary):""}</div>
+  <div class="desc">${esc(j.desc)}</div><div class="tags">${j.tags.filter(Boolean).map(t=>`<span>${esc(t)}</span>`).join("")}</div>
+  <div class="act"><a href="${esc(j.url)}" target="_blank" rel="noopener" data-id="${esc(j.id)}">Ver vaga →</a></div></div>`).join("")
+  :'<div class="empty">Nenhuma vaga com esses filtros.</div>';
+}
+$("#grid").onclick=e=>{const a=e.target.closest("a[data-id]");if(a){seen.add(a.dataset.id);localStorage.seen=JSON.stringify([...seen]);setTimeout(render,300)}};
+["q","kind","src"].forEach(i=>$("#"+i).oninput=render);
+["onlyNew","hideSeen"].forEach(i=>$("#"+i).onclick=e=>{st[i]=!st[i];e.target.classList.toggle("on");render()});
+render();
+</script></body></html>
