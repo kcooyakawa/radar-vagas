@@ -45,6 +45,21 @@ STRONG = ["art director", "creative director", "diretor de arte", "direção de 
 SEARCH_TERMS = ["art director", "graphic designer", "social media designer",
                 "video editor", "landing page design"]
 
+# Buscas nas fontes brasileiras (Gupy)
+SEARCH_TERMS_BR = ["designer", "diretor de arte", "social media", "designer gráfico",
+                   "motion designer", "editor de vídeo", "web designer", "criação"]
+
+# Anti-golpe: se TÍTULO ou DESCRIÇÃO tiver qualquer destes, a vaga é descartada
+SCAM = [
+    "taxa de inscrição", "taxa de cadastro", "pague", "pagamento antecipado", "investimento inicial",
+    "kit inicial", "renda extra", "ganhe até", "ganhe r$", "trabalhe de casa e ganhe", "dinheiro fácil",
+    "sem experiência ganhe", "marketing multinível", "pirâmide", "chame no whatsapp", "telegram",
+    "pix antes", "unpaid", "free test", "teste gratuito", "sem remuneração", "voluntário", "volunteer",
+    "for exposure", "equity only", "commission only", "só comissão", "crypto", "nft", "forex",
+    "apostas", "bet ", "onlyfans", "adult",
+]
+MIN_FREELA_BUDGET = 50   # freelas com orçamento máximo (em USD) abaixo disso são ignorados
+
 KEEP_DAYS = 21
 
 SOURCES = {
@@ -54,4 +69,5 @@ SOURCES = {
     "himalayas": True,
     "freelancer": True,
     "linkedin": True,
+    "gupy": True,   # Brasil — empresas verificadas, baixo risco de golpe
 }
